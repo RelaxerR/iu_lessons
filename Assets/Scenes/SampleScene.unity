@@ -3139,8 +3139,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   MoveSpeed: 10
+  SensitivityVertical: 1
   Head: {fileID: 1629373651}
-  Deadzone: 20
+  DeadZoneMin: -45
+  DeadZoneMax: 45
 --- !u!4 &2017115290
 Transform:
   m_ObjectHideFlags: 0
