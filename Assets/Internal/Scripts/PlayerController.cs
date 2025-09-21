@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,7 +24,22 @@ namespace Internal.Scripts
     private float DeadZoneMax = 45f;
 
     private float VerticalRotation;
+    
+    [SerializeField]
+    private float RunSpeed = 20;
 
+    private float CurrentSpeed;
+
+    private void Start()
+    {
+      CurrentSpeed = MoveSpeed;
+    }
+    public void OnRun(InputAction.CallbackContext context)
+    {
+      var input = context.ReadValue<float>();
+      Debug.Log(input);
+      CurrentSpeed = input > 0 ? RunSpeed : MoveSpeed;
+    }
     public void OnMove(InputAction.CallbackContext context)
     {
       moveInput = context.ReadValue<Vector2>();
@@ -42,7 +58,9 @@ namespace Internal.Scripts
     private void Update()
     {
       var moveVector = new Vector3(moveInput.x, 0, moveInput.y);
-      transform.Translate(moveVector * (Time.deltaTime * MoveSpeed), Space.Self);
+      transform.Translate(moveVector * (Time.deltaTime * CurrentSpeed), Space.Self);
     }
+    
+    
   }
 }
