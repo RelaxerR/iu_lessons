@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 5378181002568505479}
   - component: {fileID: 6453290359663731282}
   - component: {fileID: 8348617453148736523}
+  - component: {fileID: 6515068110119339487}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -254,14 +255,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 608d1f93990a46fbb4b0731b85a8aec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Internal.Scripts.Lesson2.EnemyController
-  MoveSpeed: 9
-  SensitivityVertical: 1
-  Head: {fileID: 937348537157671448}
-  DeadZoneMin: -45
-  DeadZoneMax: 45
-  RunSpeed: 21
-  DirectionChangeSpeedMin: -1
-  DirectionChangeSpeedMax: 1
+  moveSpeed: 10
+  directionChangeSpeedMin: -1
+  directionChangeSpeedMax: 1
+  fireballPrefab: {fileID: 0}
+  fireballSpawnPoint: {fileID: 0}
+  fireballCooldown: 2
+  raycastDistance: 10
+  head: {fileID: 0}
+--- !u!65 &6515068110119339487
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4336073830323991261}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 10, y: 2, z: 8}
+  m_Center: {x: 0, y: 1, z: 2}
 --- !u!1 &4935226743883487166
 GameObject:
   m_ObjectHideFlags: 0
