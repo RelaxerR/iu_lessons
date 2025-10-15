@@ -1,4 +1,6 @@
 using System;
+using Internal.Scripts.Interface;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,6 +43,8 @@ namespace Internal.Scripts
     private float verticalRotation;
     private float currentSpeed;
     private float nextFireTime;
+    [CanBeNull]
+    private IInteractable currentInteractable;
 
     #endregion
 
@@ -56,6 +60,17 @@ namespace Internal.Scripts
     {
       HandleMovement();
       HandleShooting();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+      Debug.Log($"Some object entered in player trigger: {other.gameObject.name}");
+      if (other.TryGetComponent<IInteractable>(out var component)) currentInteractable = component;
+    }
+    private void OnTriggerExit(Collider other)
+    {
+      Debug.Log($"Some object exit in player trigger: {other.gameObject.name}");
+      if (other.TryGetComponent<IInteractable>(out var component) && currentInteractable == component) currentInteractable = null;
     }
 
     #endregion
@@ -90,6 +105,13 @@ namespace Internal.Scripts
       {
         TryShoot();
       }
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+      Debug.Log($"Some object interacted with player interact: {context.started}");
+      if (!context.started) return;
+      currentInteractable?.Interact();
     }
 
     #endregion
