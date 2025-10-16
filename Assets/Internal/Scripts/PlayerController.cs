@@ -15,6 +15,10 @@ namespace Internal.Scripts
     [Header("=== Movement ===")]
     [SerializeField] private float MoveSpeed = 10f;
     [SerializeField] private float RunSpeed = 20f;
+    [SerializeField] private float CrouchSpeed = 3f;
+    [SerializeField] private float JumpForce = 7f;
+    [SerializeField] private float CrouchHeight = 0.5f;
+    [SerializeField] private float StandHeight = 2f;
 
     [Header("=== Rotation ===")]
     [SerializeField] private float SensitivityVertical = 1f;
@@ -45,6 +49,10 @@ namespace Internal.Scripts
     private float nextFireTime;
     [CanBeNull]
     private IInteractable currentInteractable;
+    private Rigidbody rb;
+    private CapsuleCollider capsule;
+    private bool isGrounded;
+    private bool isCrouching;
 
     #endregion
 
@@ -54,12 +62,17 @@ namespace Internal.Scripts
     {
       currentSpeed = MoveSpeed;
       nextFireTime = Time.time;
+      rb = GetComponent<Rigidbody>();
+      capsule = GetComponent<CapsuleCollider>();
+      if (capsule)
+        capsule.height = StandHeight;
     }
 
     private void Update()
     {
       HandleMovement();
       HandleShooting();
+      CheckGrounded();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -114,6 +127,32 @@ namespace Internal.Scripts
       currentInteractable?.Interact();
     }
 
+    public void OnJump(InputAction.CallbackContext context)
+    {
+      if (context.performed && isGrounded)
+      {
+        rb.AddForce(Vector3.up * JumpForce, ForceMode.Impulse);
+      }
+    }
+
+    public void OnCrouch(InputAction.CallbackContext context)
+    {
+      if (context.started)
+      {
+        if (isCrouching)
+          return;
+        capsule.height = CrouchHeight;
+        currentSpeed = CrouchSpeed;
+        isCrouching = true;
+      }
+      else if (context.canceled)
+      {
+        capsule.height = StandHeight;
+        currentSpeed = MoveSpeed;
+        isCrouching = false;
+      }
+    }
+
     #endregion
 
     #region Private Methods
@@ -135,20 +174,14 @@ namespace Internal.Scripts
 
       if (Time.time < nextFireTime) return;
 
-      // Направление выстрела — вперёд от точки спавна
       var fireDirection = FireballSpawnPoint.forward;
-
-      // Рейкаст в поисках врага
-      // if (!Physics.Raycast(FireballSpawnPoint.position, fireDirection, out var hit, FireRaycastDistance))
-      //   return;
-      // // Проверяем, попали ли во врага (по тегу или по компоненту)
-      // if (!hit.transform.CompareTag("Enemy"))
-      //   return;
-      // Создаём огненный шар
       Instantiate(FireballPrefab, FireballSpawnPoint.position, FireballSpawnPoint.rotation);
       nextFireTime = Time.time + FireCooldown;
+    }
 
-      // Debug.Log($"Hit enemy: {hit.transform.name}");
+    private void CheckGrounded()
+    {
+      isGrounded = Physics.Raycast(transform.position, Vector3.down, capsule.height / 2f + 0.1f);
     }
 
     #endregion
